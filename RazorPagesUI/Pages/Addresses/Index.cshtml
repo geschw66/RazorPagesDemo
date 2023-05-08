@@ -1,0 +1,54 @@
+﻿@page
+@model RazorPagesUI.Pages.Employees.IndexModel
+@{
+    ViewData["Title"] = "Index";
+    string[] TableHeaders = new string[]
+    {
+      "Street Address",
+      "City",
+      "State",
+      "Zip Code"
+    };
+}
+
+<h1>Addresses</h1>
+
+<h3>@Model.Addresses.Count() Addresses:</h3>
+
+<div class="table">
+    <table>
+        <thead>
+            <tr>
+                @{
+                    foreach (var head in TableHeaders)
+                    {
+                        <th>
+                         @head;
+                        </th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                foreach (var Address in Model.Addresses)
+                {
+                    <tr>
+                        <td>
+                            @Address.StreetAddress
+                        </td>
+                        <td>
+                            @Address.City
+                        </td>
+                        <td>
+                            @Address.State
+                        </td>
+                        <td>
+                            @Address.ZipCode;
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

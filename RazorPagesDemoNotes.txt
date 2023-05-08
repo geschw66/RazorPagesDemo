@@ -1,0 +1,620 @@
+Notes: Intro to ASP.NET Core Razor Pages - From Start to Published by Tim Corey:
+
+https://youtu.be/68towqYcQlY
+
+(stretch out to 123 cols so it's not garbled up)
+
+This is from Tim Coreys YouTube Video:
+
+ASP.NET Core is the web side of .NET Core development. Under this umbrella are three major components - Razor Pages, MVC, Blazor, and API. All of these project types can co-exist in the same website without an issue, yet they all fill a different role. In this video, we are going to look at Razor pages, the quickest and easiest way to create a powerful server-side web application in C#. We will look at how to set a project up, how to capture and display data, and how to deploy it.
+
+These are my personal notes below that outline stuff I thought was important:
+
+
+Using Kestral Server not IIS in the web-server ddl.. RazorPagesUI or the name of the project appears... this will allow us to use Kestral.
+
+--> better choice -->Kestral is a command line web server. Behind scenes launches console window; which will launch web app from that console window. ==> BIG TICKET ITEM: we get to see exactly what is going on with our webserver.
+
+-see traffic ..what is happening
+-see commands that are being rejected.
+-things we missed
+-what errors were thrown.
+
+All this info is potentially helpful for debugging.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+_Layout.cshtml: @RenderBody:
+
+Inject our razor page into:
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody() <--- injecting our index page.
+        </main>
+    </div>
+
+All of these pages argoing through this standard layout.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+MVC asp.net... this is similar to the ASP.NET.
+.NET Core ... they use bootstrap 4 as their framework.
+
+===
+Def'n: Bootstrap is just a framework on top of HTML, CSS and JavaScript.
+
+===
+wwwroot
+     |
+     +-lib
+        |
+        +-bootstrap
+           |
+           +-dist
+               |
+              js
+               |
+               +--bpptstrap.js
+
+• In .NET Core it's bootstrap 4.1.
+
+• In .NET Framework it's bootstrap 3...er 3.7.
+
+• What is the difference? Massive. MS has stayed with this.
+  You really want to stay with the versions you launched with.
+
+• Bootstrap allows us to layout our pages in nice clean ways.
+   -- great documention! dial in the version.
+   -- getbootstrap.com <==| Great guide.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Static Resources: wwwroot.
+
+.NET Framework we didn't have a great "story" for static resources. but yet the web has a lot of static resources; CSS, javascript and image files....just slammed it into the Visual Studio Project structure and that didn't work that well. And by that ... it "worked" but not IDEALLY, and so a team when they were rethinking things for .NET core ...thought lets create a place for static resources.
+
+WWWRoot folder --> the root of this folder is what will be on the root of your project. Notice favicon.ico is right on the root of the this folder. It just pulls it -- you don't have to specify it in the _Layout.cshtml page and it just pulls it in the root of your web directory. It is just going to inject it into this  wwroot structure.
+
+Anything you put here will be pulled over into the site starting at the root.
+
+lib folder/directory: bringing in external resources.
+
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+BASICS OF HOW RAZOR PAGES WORK:
+
+Pages folder:
+ • Underscore ViewStart, Underscore ViewImports...these help us get started in razor pages.
+
+ • Error Index and Privacy: Intro pages; or what could happen.
+     ○ Index is our default page --> page that is loaded if you don't give ANY URL. For example, if you just have a main           url but no / (slash) this or that...then this Index.cshtml page is what loads. In a plain old webserver index.htm or 
+       index.html is your starting page.
+
+       @page: on line 1; this indicates it is a RAZOR page. @ symbol indicates that it is RAZOR syntax...works in MVC and
+         not just in RAZOR.
+
+       TWO THINGS known as razor:
+         - One is the syntax.
+         - The other is the page.
+
+       If we look at the index.cshtml the proper terminolgy is that Index.cshtml is a razor PAGE that is using the                 razor SYNTAX. @ indicates that this is C# code that we are running on our web-page.
+
+       Couple of different ways to do this running of C# code:
+    
+       ○ INLINE: @page, @model Index <--- is inline...line 1 and 2 of the Index.cshtml.
+
+       ○ MULTILINE: @ and curly brackets (line 3 through and including 5 on the Index.cshtml.
+         @{
+             ViewData["Title"] = "Home page";
+          }
+
+      recall ... @page again means hey this is a razor page!
+      
+      @model: so with @model IndexModel --> this is the data associated with this index page. You typically have only ONE
+      model...this would be analogous to the CODE-BEHIND if talking about WinForms or WebForms....but it is actually THE       PAGE MODEL (not the code behind) right clic on the index page and select Page Model from the menu...you can see it.
+
+      Web Forms... is an older technology....currently the last major change, outside of security fixes are in .NET 4.8.
+      Should get away from that technology. It goes way back to ASP.NET (C#) 2.0? maybe the 1.13? Had web forms on the 
+      front end and right behind it you have/had C# code --> that would run the background and do C# work. Goal was to
+      have something super similar to WinForms with that drag and drop with a code behind model -- but for the web.
+ 
+      Again WebForms is something that is not moving forward in the .NET Core. IT is done as of .NET framework 4.8.
+
+      • All though the Page Model looks similar... to the WebForms... it is something radically different: an MVVM                  FRAMEWORK STYLE. 
+
+      • The big ticket item is the Page Model is JUST A CLASS --> which means we can DO UNIT TESTING on it. So ignore the           idea that we called code behind-->  our VIEW MODEL for our view.
+
+
+     @{}: Lets look at this.. ViewData["Title"] = "Home page"; ... ViewData is just a dictionary that is a dumping ground      to put key value pairs. Moving BACK to the shared _Layout.cshtml page:
+
+        <title>@ViewData["Title"] - RazorPagesUI</title>
+
+     ...we are pulling from that view data: @ViewData["Title"] and putting that value here on line 6 of the      _Layout.cshtml page. So every page you go to will change that version of the title. So it changes the Title on the 
+     layout page even though we are on the page that is just getting injected in the div class="container" on line 32.
+
+    So with our @ razor syntax.... we have a wee bit o' HTML and CSS... which makes up the welcome page:
+
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+This is what the page is in the front end. On to the View Model side of it.
+
+-----
+VIEW MODEL:
+
+ Page Model: is just a class. IndexModel that inherits from PageModel... it is a public class.
+
+  • Constructor has a logger injected into it... you can use what ever logger you want (see .NET Core Logging vid).
+  
+      public IndexModel(ILogger<IndexModel> logger)
+
+      [X]-->for example giving a log when ever we have a get request for this page.
+
+    Razor pages are typically simple.Typically you have one or two verbs: GET or POST...In contrast to MVC which can have     a wide range of verbs...like multiple different posts on the same controller,  and multiple different views on the      same controller etc...
+
+    This page model is JUST for this page; Index.cshtml.
+
+  • OnGet() is what RENDERS the page in this case our example is Index.cshtml.
+
+      public void OnGet()
+      {
+
+      }
+
+   ....so the code above is what gets run when you ask for an index page (Index.cshtml)..
+
+   • OnPost() And likewise if we did have the post:
+
+     public void OnPost()
+     {
+
+
+     }
+   
+   ...this would be the code run whenever you POST DATA TO this page. Typically you will AT LEAST have OnGet() you will    want to SHOW data but maybe not POST or CAPTURE data off of it. If on the other hand we had a sign-up page or an address page where we'd want to capture a mailing address from a client, you'd have an OnPost().
+
+-----
+PROPERTIES:
+Interestingly enough we don't pass data across the GET or the POST methods, at least NOT DIRECTLY.Instead we use properties...regular old properties from C#. In the Page Model: Index.cshtml.cs, if we put the property:
+
+   public string Id { get; set; }
+
+This property can be read by the index page...or rather the Index.cshtml page....for example.
+ If I put @Model.Id in the Index.cshtml page.... it would read it from the property Id in the Index.cshtml.cs page ergo our  Page Model. So what ever properties you have in your index model, you can display on the web page.
+
+- - - -
+GET: BindProperty:
+
+If you want to write to that property you have to bind it with the [] ==> Bind Property:
+
+      [BindProperty] // this bracketed line is known as an attribute
+      public string Id { get; set; }
+
+Now the above will just post the data...but if you want to put it in the URL:
+
+      [BindProperty(SupportsGet = true)]
+      public string Id { get; set; }
+
+Change the property name to FirstName:
+
+      [BindProperty(SupportsGet = true)]
+      public string FirstName { get; set; }
+
+ I can either POST data or put it in the URL. 
+
+And add the @Model.FirstName to the line with the Welcome text on it like so:
+
+<div class="text-center">
+    <h1 class="display-4">Welcome @Model.FirstName</h1> //<----[X]
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+Compile it... run it. We will see no change:
+
+  Welcome
+
+...why? A value was NEVER passed accross! 
+
+
+
+
+But if I type in ?FirstName=Tim and reload the page... I will see:
+
+    Welcome Tim
+
+(It will automagically show the URL as: https://localhost:5001/?FirstName=Tim)
+
+• Now it captured that value off of the URL and said ... hey that is a parameter and thats a property, and if we go to the FistName it sees that yes that it supports get, ergo: [BindProperty(SupportsGet = true)].
+
+Now if we do this:
+
+      public void OnGet()
+      {
+         if (string.IsNullOrEmpty(FirstName))
+         {
+            FirstName = "User";
+         }
+      }
+
+ Run it. Now it says:
+
+  Welcome User
+
+Or we can change it if the user overrides it with a parameter in the URL:
+
+https://localhost:5001/?FirstName=Tim
+
+That is how you do a GET BIND PROPERTY.
+
+CAUTION: You do NOT want to send any  sensitive data or Personal Identifiable Information (PII) accross that URL! (obviously), no passwords, credit card, soc security number ANY PII info etc..
+
+typically we just do Ids... just give me this specific record....but how do you send info w/o tacking it on the URL?
+
+-----
+  RAZOR PAGES LAYOUTS: HOW THEY WORK.  
+
+
+This is how it works to know where to get a page or how a page URL layout IS.
+
+Right now we have everything under the Pages folder: Error Index and Privacy. If the user clicks on the Privacy link they will see the URL change to:
+
+https://localhost:5001/Privacy
+
+..and the Privacy is right on the root of the URL this. what this is saying is "this is the path to that specific page notice it's not /Privacy.cshtml, its JUST /Privacy --this is how Razor pages routing works. It works upon the path from pages in relation to the pages which means that if I add a folder here...say Forms:
+
+   Pages
+     |
+     +----Forms
+             |
+             + --NewPage.cshtml
+
+...and inside here the developer creates a new razor page:
+
+     Create that new folder by right clicking on the Pages folder, Add-->New Folder; naming it Forms, and create a blank razor page...by right clicking again on the new Forms folder and selecting Add-->New Razor Page... select the first razor page selection that will be a BLANK/EMPTY razor page... Call it AddAddress:
+
+
+   Pages
+     |
+     +----Forms
+             |
+             + --AddAdress.cshtml
+
+So Options:
+
+ (1) Check the "Generate PageModel class" checkbox (creates the stuff in the PageModel we saw in Index.cshtml.cs)...it's a Full class not a partial view; dont check Create as a Partial view.
+
+ (2) Check the "Use a layout page:" checkbox; but leave the text block blank and that will set it to the _viewstart file by default.
+
+
+• AddAddress will function as an example of how to Post data.
+
+• You will notice it takes a little bit of time to restore the package as necessary, because it is adding some NuGet packages...When you look at the resulting page; AddAddress.cshtml... there is really isn't much there.
+
+@model RazorPagesUI.AddAddressModel
+@{
+    ViewData["Title"] = "AddAddress";
+}
+
+<h1>AddAddress</h1>
+
+
+
+----------+
+SIDEBAR:   \
+Scaffolding:\
+             + ------------------
+[1: TutorialsPoint] a technique used to generate code at design time to support a number of common application scenarios when working with Entity Framework Core. (https://www.tutorialspoint.com/asp.net_mvc/asp.net_mvc_scaffolding.htm)
+
+[2: Wikipedia]: Scaffolding is a technique supported by some model–view–controller frameworks, in which the programmer can specify how the application database may be used.
+
+what is .NET Core Scaffolding?:
+   see: https://docs.microsoft.com/en-us/aspnet/visual-studio/overview/2013/aspnet-scaffolding-overview
+
+----------+----------
+
+Now navigate to AddAddress you will notice that going to:
+
+https://localhost:5001/AddAddress... will show no page found.
+
+Rememeber the root of these pages is actually Pages (localhost:5001 is the root is the Pages folder)...so you have to navigate to: localhost:5001/Forms/AddAddress. If I wanted to change the location of the page, I could just move it to a different folder and change the URL for it.
+
+----------
+CREATING the FORM:
+
+We want:
+
+• Street Address
+• City
+• State
+• Zip Code
+
+Normally we'd just start creating it on the actual HTML page. But we need to WIRE THIS UP TO OUR MODEL -- which doesn't exist yet.
+
+We could put all the properties we need in the PageModel. But that is NOT really how C-Sharp works.
+
+So in MVVM we have:
+
+Model, View and ViewModel
+
+• ViewModel: again is our PageModel (the page that is kinda' like code behind -- cshtml.cs)
+•      View: is the actual form page (cshtml page)
+•     Model: a separate C# object.
+
+1st step: is to create a new folder called Models at the root level of the project RazorPagesUI; it's at the same level as the Pages folder.
+
+2nd step: is to create the model which is just a C# class called AddressModel (note the postfix Model).
+
+----------+
+SIDEBAR:   \
+ ZIPCODES:  \
+             +--------
+ We always make zip codes strings because in the U.S. some zipcodes start with a zero (0) and well numeric values in a database are never stored with a leading zero...so you have to use string or a chararray (varchar) to store the zip.
+
+--------------+
+SIDEBAR:       \
+  PROP tab tab  \
+                +--------
+short hand to create a property in a class:
+-type out prop ...autofill will know that it means you are trying to make a property.
+- then tab tab <type> then tab tab <name> then enter to complete the property line.
+
+----------+----------
+- - -
+Step 3: create a property of AddressModel in AddAddress.cshtml.cs:
+-Again use the prop short cut to make it quicker to create.
+
+-Since we haven't gotten the Models imported or included (using in C#): we will need to hit Ctrl + . to fix this to add the using statement to the AddAddress ViewModel (PageModel).
+- - -
+Step 4: add the attribute [BindProperty], and since it is only a post, we will not add the SupporGet = true. Nope not gonna do it.
+
+Step 5: Create the form on the View (ergo: AddAddress.cshtml):
+
+Note we will not make this pretty...pretty is more of a Bootstrap conversation...and well this is a razor pages tutorial.
+
+a) type in the form:
+
+<form method="post">
+
+</form>
+
+method="post": this is important befcause this tells the form tag here is how you submit this. So when the user hits the submit button, this is going to send this as a post...and since we typically have an OnGet() and an OnPost(): this is how we will capture this...in the OnPost() method. so make sure...
+
+b) create input fields:
+
+  <form method="post">
+   <input type="text" asp-
+
+</form>
+
+i) input tag with type="text" 
+ii) asp- : a really nice feature: when ever you are in an element in HTML pretty much...it probably has a HELPER that is from ASP.NET.... type asp- in the input tag -- you should notice that the INTELLISENSE will load the list of asp helper attributes that have to do with the HTML input tag.
+
+we want the asp-for:
+
+What this does is allow the developer to point to a specific property, that says THATS WHAT THIS RELATES TO US what this links to. If you have data in this propery (ergo AddressModel) display it in the form if you put information in the form and post it.
+
+So we can use it like this:
+
+ <input type="text" asp-for="Address.StreetAddress" />
+
+• Note there is no @ symbol to denote the razor syntax.
+• Also note that we are accessing a property within a property.
+
+<form method="post">
+   <input type="text" asp-for="Address.StreetAddress" placeholder="Street Address" />
+   <input type="text" asp-for="Address.City" placeholder="City" />
+   <input type="text" asp-for="Address.State" placeholder="State" />
+   <input type="text" asp-for="Address.ZipCode" placeholder="Zip Code" />
+
+</form>
+
+c) create the submit button. create a button HTML tag of type="submit".
+
+ • submit button type means when you click this send all this data BACK to the page model; and do that via the post (method).
+
+d) Back to the View Model we need to recieve the submitted info/data from the client's browser.
+
+ i)   public IActionResult <----  This is the typical output when we do a post 
+
+...we do some sort of "ACTION" when you submit a form.
+ Go to a different page
+         different site
+         refresh a page.
+
+public IActionResult OnPost() <-- the razor page says I am going to see the On and then the action (the verb) so get this.
+  At this point the OnPost() has a redline under it because there is no return value.
+
+ii) for this OnPost() we will need to create a return value.
+    --Do Model validation ModelState.IsValid:
+
+      public IActionResult OnPost()
+      {
+         //If something is wrong with our values sent in..ergo a blank value was sent.
+         if (ModelState.IsValid == false)
+         {
+            return Page(); //Creates a PageResult value that will rerender the page.
+         }
+
+         return RedirectToPage("./Index"); // for now lets redirect to the Index page.
+      }
+
+
+iii) For now if everything seems correct...redirect to the Index page.
+  
+                 return RedirectToPage("./Index"); // for now lets redirect to the Index page.
+
+
+-To test we will put a break point on the ModelState.IsValid if statement...At this point all our posts will be valid because there IS NO VALIDATION set. :O ....No worries adding validation later.
+
+vi) Lets change the Navbar on the _Layout page first!
+
+• in the _Layout page the default navbar already shows us how it works
+
+• copy a li section (ergo a list item).
+
+step 5: RUN IT.
+
+Type in your address.
+Click Submit.
+
+• Now look at the Locals window. Expand the this word. look at Address--> yes that is our address!
+
+• Note we didn't have to pass anything in OnPost(); no model, no json, none of that stuff. That is all handled by the compiler, which figures out how to link all that stuff up using this bind property ([BindProperty] attribute}
+
+-------------------------
+ACCESSING THE AddressModel on the Welcome/Index page:
+
+Another wrinkle. Lets say we want to say Welcome To Scranton or the city where they live.
+
+-Change FirstName property to City in the Index ViewModel, and the View.
+-Change the RedirectToPage on AddAddress to the version with string pageName, object routeValues.
+-The value of routeValues is an ANONOMOUS OBJECT with the Address.City.
+
+ • Also the routeValues arg is an ANONOMOUS object called city.
+ Alternatively we could put City = Address.City but the compiler has the smarts to call
+ City by virtue that the property has the name "City" already:
+
+         return RedirectToPage("/Index", new { Address.City });
+
+
+ • NOTE: with the return variation II we return an anonomous string object
+ called City which matches up with the name City called out on the ViewModel.
+ After the user types in the whole address because these properties have the exact same 
+ name (Address.City, and Index.City) it should show the city name the user typed in on the
+ Add Address page.
+
+In the resulting redirect to the Index page we see the GET:
+https://localhost:5001/?City=University%20City
+
+and this works why? Because of the BindProperty with the added arg (SupportsGet = true) it can bind to the GET Action.
+
+      [BindProperty(SupportsGet = true)]//without this SupportsGet --> I can only post.
+      public string City { get; set; }
+
+============================
+Another principal/ best practice regarding DATA ACCESS:
+
+After showing this the question usually becomes: "Okay how do you do data access with MVC? How about API, Blazer?"
+ 
+YOUR DATA ACCESS SHOULD NOT DEPEND ON WHICH USER INTERFACE YOU USE...
+
+your data access should be the same regardless of which USER INTERFACE you want to use.
+
+The only thing missing in this tutorial, IS the "SAVE MODEL TO DATABASE" part...which would happen in the 
+OnPost() method.
+
+      public IActionResult OnPost()
+      {
+         //If something is wrong with our values sent in..ergo a blank value was sent.
+         if (ModelState.IsValid == false)
+         {
+            return Page(); //Creates a PageResult value that will rerender the page.
+         }
+
+         //NOTE: Here is where you would SAVE MODEL TO DATABASE.<===[*]
+
+         return RedirectToPage("/Index", new { Address.City });
+      }
+
+[*] So at this point to save it to the database...you hand it off to a CLASS LIB. that would save it to
+ a SQL Server Database, or MySql or MongoDB etc...
+
+DISCONNECTED ARCHITECTURE.
+In index we can get this from a data access layer. Disconnected architecture.
+So this is a different tutorial.
+
+The idea is to NOT tie everything together... make part a separate layer/thing/ etc... that can be swapped out.
+
+============================
+PUBLISHING this.
+
+1) Right click on the project name: RazorPagesUI and select Publish.
+
+2) Dialog or pop up window: Pick a publish target.
+
+    --App Service (Azure)
+    --App Service Linux
+    --Azure Vurtual Machines
+    -- IIS, FTP, etc
+    -- Folder (you'd just drop that into say IIS).
+
+
+Azure is not entirely free.
+
+--Azure provides you alot of free stuff.... $200.00
+---25 services are free for life.
+ App Service is one of these
+  -->verry base tier.
+
+i) You have to link it to a subscription.
+ii) and a resource group... these are JUST NAMES.
+    ==>use this...but delete it when you are finished learning or demoing or whatever
+       so you don't get charged.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+     
+
+     
+
+
+
+
+
+
+     
+
+  
+
+
+
+
+
+
+
+
+
+
+
