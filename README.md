@@ -10,3 +10,11 @@ Simple CRUD Project Using Razor Pages w/ Display Template and Page Model Class.
   o Add.
   
   o Get All Records.
+  
+ -Future Functionality:
+ 
+  o Delete.
+  
+  o Update.
+  
+  o Get Address.
